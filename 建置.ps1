@@ -2,6 +2,8 @@
     [string]$編譯器 = 'aqua',
     [switch]$略過驗證,
     [switch]$桌面
+,
+    [switch]$Android, [switch]$APK
 )
 $ErrorActionPreference = 'Stop'
 
@@ -49,6 +51,12 @@ try {
         執行編譯器 @('build','貪吃蛇.wasm','--target','windows','-o','dist/貪吃蛇.exe') | Out-Null
     }
     Write-Host '完成：貪吃蛇.wasm 與 ./web。'
+
+    if ($Android -or $APK) {
+        $AndroidOutput = if ($APK) { 'dist/android.apk' } else { ('dist/android-project-' + [Guid]::NewGuid().ToString('N').Substring(0,8)) }
+        執行編譯器 @('build','貪吃蛇.wasm','--target','android','-o',$AndroidOutput) | Out-Null
+        if ($LASTEXITCODE -ne 0) { throw 'Android 建置失敗。' }
+    }
 } finally {
     [Console]::OutputEncoding = $原主控台輸出編碼
     $OutputEncoding = $原輸出編碼
