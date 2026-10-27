@@ -1,4 +1,4 @@
-﻿param(
+param(
     [string]$編譯器 = 'aqua',
     [switch]$略過驗證,
     [switch]$桌面
@@ -35,7 +35,7 @@ try {
     # 將編譯器提供的網頁外殼做在地化。
     $首頁路徑 = Join-Path $PSScriptRoot 'web\index.html'
     $首頁 = [IO.File]::ReadAllText($首頁路徑)
-    $首頁 = $首頁.Replace('lang="en"', 'lang="zh-Hant"').Replace('<title>Aquarius WebAssembly</title>', '<title>青芽・貪吃蛇</title>')
+    $首頁 = $首頁.Replace('lang="en"', 'lang="zh-Hant"').Replace('<title>AquariusLang</title>', '<title>青芽・貪吃蛇</title>')
     $首頁 = $首頁.Replace('outline:none}', 'outline:none;touch-action:none}').Replace('background:#0c1624', 'background:#f8f8f0')
     [IO.File]::WriteAllText($首頁路徑, $首頁, [Text.UTF8Encoding]::new($false))
     $啟動路徑 = Join-Path $PSScriptRoot 'web\app.mjs'
@@ -43,9 +43,6 @@ try {
     $啟動 = $啟動.Replace('error.textContent=e.message;', 'console.error(e);error.textContent="遊戲無法啟動。請透過本機網址或安全連線開啟，並確認瀏覽器支援圖形加速。";')
     $啟動 = $啟動.Replace("output.textContent+=e.message+'\n';", 'output.textContent+="遊戲執行中發生問題。請重新載入頁面。\n";')
     [IO.File]::WriteAllText($啟動路徑, $啟動, [Text.UTF8Encoding]::new($false))
-    $繪圖路徑 = Join-Path $PSScriptRoot 'web\processing.mjs'
-    $繪圖 = [IO.File]::ReadAllText($繪圖路徑).Replace('Aquarius text input', '遊戲鍵盤輸入')
-    [IO.File]::WriteAllText($繪圖路徑, $繪圖, [Text.UTF8Encoding]::new($false))
     [IO.File]::WriteAllText((Join-Path $PSScriptRoot '驗證結果\編譯器.txt'), $編譯器, [Text.UTF8Encoding]::new($false))
     if ($桌面) {
         執行編譯器 @('build','貪吃蛇.wasm','--target','windows','-o','dist/貪吃蛇.exe') | Out-Null
@@ -53,7 +50,7 @@ try {
     Write-Host '完成：貪吃蛇.wasm 與 ./web。'
 
     if ($Android -or $APK) {
-        $AndroidOutput = if ($APK) { 'dist/android.apk' } else { ('dist/android-project-' + [Guid]::NewGuid().ToString('N').Substring(0,8)) }
+        $AndroidOutput = 'dist/android.apk'
         執行編譯器 @('build','貪吃蛇.wasm','--target','android','-o',$AndroidOutput) | Out-Null
         if ($LASTEXITCODE -ne 0) { throw 'Android 建置失敗。' }
     }

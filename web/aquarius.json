@@ -1,0 +1,5 @@
+{
+  "program": "program.wasm",
+  "entry": "貪吃蛇.aqua",
+  "assets": {}
+}
